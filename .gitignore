@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+BUILD-NOTES.md
+*.log
+test/.tmp-fixtures/

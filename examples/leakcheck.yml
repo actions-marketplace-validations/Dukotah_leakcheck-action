@@ -1,0 +1,15 @@
+# Copy this file to .github/workflows/leakcheck.yml in your repo.
+name: LeakCheck
+on: [push, pull_request]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Dukotah/leakcheck-action@v1
+        # Optional configuration:
+        # with:
+        #   fail-on: critical        # only fail on critical leaks
+        #   paths: src, config       # scan specific paths
+        #   ignore: "**/*.test.js"   # skip globs

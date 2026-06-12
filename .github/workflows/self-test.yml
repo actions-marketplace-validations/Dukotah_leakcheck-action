@@ -1,0 +1,41 @@
+name: self-test
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run engine unit tests
+        run: node test/run-tests.js
+
+  action-detects-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate the synthetic fixture
+        run: node test/make-fixture.js "${{ runner.temp }}/leaky"
+      - name: Run the action against the fixture (report-only)
+        id: scan
+        uses: ./
+        with:
+          paths: ${{ runner.temp }}/leaky
+          fail-on: none
+      - name: Assert it found the planted secrets
+        run: |
+          echo "findings: ${{ steps.scan.outputs.findings-count }}"
+          if [ "${{ steps.scan.outputs.findings-count }}" -lt 7 ]; then
+            echo "Expected the fixture's planted secrets to be detected"; exit 1
+          fi
+
+  action-clean-repo-passes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the action on the source (no real secrets) — must pass
+        uses: ./

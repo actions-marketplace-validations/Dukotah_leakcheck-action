@@ -1,0 +1,35 @@
+name: "LeakCheck Secret Scanner"
+description: "Scan your repo for hard-coded API keys, tokens, and secrets on every push or PR. Zero dependencies, runs in seconds."
+author: "Copper Bay Tech"
+branding:
+  icon: "shield"
+  color: "orange"
+inputs:
+  paths:
+    description: "Comma- or newline-separated paths to scan, relative to the repo root. Default scans the whole checkout."
+    required: false
+    default: "."
+  fail-on:
+    description: "Minimum severity that fails the build: critical, high, medium, low, or none. Default: high."
+    required: false
+    default: "high"
+  ignore:
+    description: "Comma- or newline-separated path globs to skip (e.g. 'test/fixtures/*, *.snap'). '*' is a wildcard."
+    required: false
+    default: ""
+  max-file-kb:
+    description: "Skip files larger than this many KB. Default: 1024."
+    required: false
+    default: "1024"
+outputs:
+  findings-count:
+    description: "Total number of potential secrets found."
+  critical-count:
+    description: "Number of critical-severity findings."
+  high-count:
+    description: "Number of high-severity findings."
+  blocking-count:
+    description: "Number of findings at or above the fail-on threshold."
+runs:
+  using: "node20"
+  main: "src/scan.js"
